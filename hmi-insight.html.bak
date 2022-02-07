@@ -921,7 +921,7 @@ Graphics to PDF, EB to Excel, FHX to Excel, and more." />
               position: relative;
   overflow: hidden;
             ">
-              <noscript><img src="images/1582957092269-Q9VITV6V94ZUF1LSENG2/Aro_2BHa_0010.jpg" alt="After being provided with a directory path, this module utilizes a custom made deserialization process to parse Honeywell HMIWeb displays and accurately reconstructs the displays into a 8.5x11 or 11x17 PDF.With an average capture time of 400 milliseconds* per graphic this module has saved countless man hours and many interns from arthritis. *Performance varies based on host machine performance." loading="lazy"/></noscript>
+              <noscript><img src="images/1582957092269-Q9VITV6V94ZUF1LSENG2/Aro_2BHa_0010.jpg" alt="HMI Capture - After being provided with a directory path, this module takes control and systematically captures HMIWeb displays by controlling Honeywell’s HMIWeb Display Builder application for concise and accurate renderings of the graphic. After all captures are complete, the user is provided with a clean PDF document of all displays. With an average capture time of 6 seconds per graphic* this module has saved countless man hours and many interns from arthritis. *Performance varies based on host machine performance." loading="lazy"/></noscript>
               <img data-src="images/1582957092269-Q9VITV6V94ZUF1LSENG2/Aro_2BHa_0010.jpg" data-image="images/1582957092269-Q9VITV6V94ZUF1LSENG2/Aro_2BHa_0010.jpg" data-image-dimensions="1086x668" data-image-focal-point="0.5,0.5" alt=""  loading="lazy"/>
               <div class="image-overlay" style="
   overflow: hidden;
@@ -936,7 +936,7 @@ Graphics to PDF, EB to Excel, FHX to Excel, and more." />
 ><h3 data-rte-preserve-empty="true" style="white-space:pre-wrap;"></h3><h3 style="text-align:center;white-space:pre-wrap;">HMI Capture</h3></div></div>
                 <div class="image-subtitle-wrapper"><div class="image-subtitle sqs-dynamic-text"
   data-animation-override
-><p class="" style="white-space:pre-wrap;">After being provided with a directory path, this module utilizes a custom made deserialization process to parse Honeywell HMIWeb displays and accurately reconstructs the displays into a 8.5x11 or 11x17 PDF.</p><p class="sqsrte-small" style="white-space:pre-wrap;">With an average capture time of 400 milliseconds* per graphic this module has saved countless man hours and many interns from arthritis. <br>*Performance varies based on host machine performance.</p></div></div>
+><p class="" style="white-space:pre-wrap;">After being provided with a directory path, this module takes control and systematically captures HMIWeb displays by controlling Honeywell’s HMIWeb Display Builder application for concise and accurate renderings of the graphic. </p><p class="" style="white-space:pre-wrap;">After all captures are complete, the user is provided with a clean PDF document of all displays. </p><p class="sqsrte-small" style="white-space:pre-wrap;">With an average capture time of 6 seconds per graphic* this module has saved countless man hours and many interns from arthritis. <br>*Performance varies based on host machine performance.</p></div></div>
             </div>
           </figcaption>
       </figure>
