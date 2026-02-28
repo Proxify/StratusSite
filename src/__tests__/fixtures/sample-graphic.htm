@@ -1,0 +1,60 @@
+<html>
+<head><title>Sample HMI Graphic</title></head>
+<body style="width: 1024px; height: 768px; background-color: #C0C0C0;">
+  <!-- Rectangle with fill -->
+  <div data-type="rectangle" style="position: absolute; left: 10px; top: 10px; width: 200px; height: 100px; background-color: #336699; border: 2px solid #003366;"></div>
+
+  <!-- Oval -->
+  <div data-type="oval" style="position: absolute; left: 250px; top: 20px; width: 80px; height: 80px; background-color: #FF6600; border: 1px solid #CC3300;"></div>
+
+  <!-- Data Value (tag) -->
+  <div data-type="datavalue" data-tag="F101.PV" style="position: absolute; left: 50px; top: 150px; width: 120px; height: 30px; color: #00FF00;">1234.56</div>
+
+  <!-- Another data value -->
+  <div data-type="datavalue" data-tag="T200.CV" style="position: absolute; left: 200px; top: 150px; width: 100px; height: 25px; color: #FFFF00;">98.7</div>
+
+  <!-- Tiny data value (should be filtered out by extractor, width/height <= 1) -->
+  <div data-type="datavalue" data-tag="HIDDEN.PV" style="position: absolute; left: 0px; top: 0px; width: 1px; height: 1px;"></div>
+
+  <!-- Navigation button -->
+  <div data-type="button" data-navigate="Display_002" style="position: absolute; left: 400px; top: 300px; width: 150px; height: 40px; background-color: #444444;">Go to Display 2</div>
+
+  <!-- Another button with quotes in navigate -->
+  <div data-type="button" data-navigate="&quot;Display_003&quot;" style="position: absolute; left: 400px; top: 360px; width: 150px; height: 40px;">Display 3</div>
+
+  <!-- Group container with nested objects -->
+  <div data-type="group" style="position: absolute; left: 100px; top: 400px; width: 300px; height: 200px;">
+    <div data-type="rectangle" style="position: absolute; left: 0px; top: 0px; width: 300px; height: 200px; background-color: #222222;"></div>
+    <div data-type="datavalue" data-tag="P301.PV" style="position: absolute; left: 20px; top: 20px; width: 100px; height: 25px; color: #FFFFFF;">567.89</div>
+    <div data-type="button" data-navigate="SubDisplay_A" style="position: absolute; left: 20px; top: 60px; width: 100px; height: 30px;">Sub A</div>
+  </div>
+
+  <!-- Shape container (should NOT be ignored) -->
+  <div data-type="shape" data-name="MainPipe" style="position: absolute; left: 500px; top: 100px; width: 200px; height: 300px;">
+    <div data-type="line" data-x2="700" data-y2="400" style="position: absolute; left: 500px; top: 100px; width: 200px; height: 300px; border-color: #00FF00;"></div>
+    <div data-type="datavalue" data-tag="V400.SP" style="position: absolute; left: 520px; top: 200px; width: 80px; height: 20px; color: #FF0000;">42.0</div>
+  </div>
+
+  <!-- Shape that SHOULD be ignored (in ignore list) -->
+  <div data-type="shape" data-name="WdgRedTag_1" style="position: absolute; left: 700px; top: 500px; width: 50px; height: 50px;">
+    <div data-type="rectangle" style="position: absolute; left: 0px; top: 0px; width: 50px; height: 50px; background-color: red;"></div>
+  </div>
+
+  <!-- Text box -->
+  <div data-type="textbox" style="position: absolute; left: 10px; top: 700px; width: 200px; height: 30px; color: #FFFFFF; font-size: 14px;">System Overview</div>
+
+  <!-- Arc -->
+  <div data-type="arc" data-start-angle="0" data-sweep-angle="180" style="position: absolute; left: 800px; top: 100px; width: 100px; height: 100px; background-color: #9933CC; border-color: #660099;"></div>
+
+  <!-- Image with base64 data -->
+  <div data-type="image" style="position: absolute; left: 800px; top: 300px; width: 64px; height: 64px;">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==" />
+  </div>
+
+  <!-- Line with points -->
+  <div data-type="line" data-points='[{"x":10,"y":10},{"x":50,"y":50},{"x":100,"y":10}]' style="position: absolute; left: 10px; top: 600px; width: 100px; height: 50px; border-color: #FF0000;"></div>
+
+  <!-- Rounded rectangle -->
+  <div data-type="rectangle" style="position: absolute; left: 600px; top: 600px; width: 150px; height: 80px; background-color: #006633; border-radius: 10px;"></div>
+</body>
+</html>

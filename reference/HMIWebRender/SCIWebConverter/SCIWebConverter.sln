@@ -1,0 +1,59 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SCIWebConverter", "SCIWebConverter.csproj", "{A149E2A3-749E-490D-8883-460520B7FF04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSExport", "..\..\SSAdmin\SSExport\SSExport\SSExport.csproj", "{2640DFC2-CA29-42A8-8674-D370850FC873}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScallonAuth", "..\..\ScallonAdmin\ScallonAuth\ScallonAuth.csproj", "{25CFDFF9-D60B-48E0-86E7-B304E8151384}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScallonUI", "..\..\ScallonAdmin\ScallonUI\ScallonUI.csproj", "{02CA3B1A-E675-40A8-AEE9-404FFFE5D1BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScallonLib", "..\..\ScallonAdmin\ScallonLib\ScallonLib.csproj", "{0AB9CF14-A7DB-4BBB-B70B-227DA99DDFCD}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SCIWebConverterInstaller", "..\SCIWebConverterInstaller\SCIWebConverterInstaller.vdproj", "{56A2629F-EB37-4781-900B-B835941619C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMIWebLib", "..\..\LittleDropSuite\HMIWebLib\HMIWebLib.csproj", "{C3467595-448F-49F8-B3C4-33C9EE630397}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A149E2A3-749E-490D-8883-460520B7FF04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A149E2A3-749E-490D-8883-460520B7FF04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A149E2A3-749E-490D-8883-460520B7FF04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A149E2A3-749E-490D-8883-460520B7FF04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2640DFC2-CA29-42A8-8674-D370850FC873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2640DFC2-CA29-42A8-8674-D370850FC873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2640DFC2-CA29-42A8-8674-D370850FC873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2640DFC2-CA29-42A8-8674-D370850FC873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25CFDFF9-D60B-48E0-86E7-B304E8151384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25CFDFF9-D60B-48E0-86E7-B304E8151384}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25CFDFF9-D60B-48E0-86E7-B304E8151384}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25CFDFF9-D60B-48E0-86E7-B304E8151384}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02CA3B1A-E675-40A8-AEE9-404FFFE5D1BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02CA3B1A-E675-40A8-AEE9-404FFFE5D1BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02CA3B1A-E675-40A8-AEE9-404FFFE5D1BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02CA3B1A-E675-40A8-AEE9-404FFFE5D1BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AB9CF14-A7DB-4BBB-B70B-227DA99DDFCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AB9CF14-A7DB-4BBB-B70B-227DA99DDFCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AB9CF14-A7DB-4BBB-B70B-227DA99DDFCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AB9CF14-A7DB-4BBB-B70B-227DA99DDFCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56A2629F-EB37-4781-900B-B835941619C5}.Debug|Any CPU.ActiveCfg = Debug
+		{56A2629F-EB37-4781-900B-B835941619C5}.Release|Any CPU.ActiveCfg = Release
+		{C3467595-448F-49F8-B3C4-33C9EE630397}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3467595-448F-49F8-B3C4-33C9EE630397}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3467595-448F-49F8-B3C4-33C9EE630397}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3467595-448F-49F8-B3C4-33C9EE630397}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A654844F-F326-4191-8A2C-A3DA3C9494E4}
+	EndGlobalSection
+EndGlobal
