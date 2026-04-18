@@ -1,0 +1,25 @@
+services:
+  stratus-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stratus-web
+    restart: unless-stopped
+    ports:
+      - "5000:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ${STORAGE_PATH:-/Volumes/External/stratus-storage}:/app/storage
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "com.stratus.service=web"
