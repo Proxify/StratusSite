@@ -244,7 +244,7 @@ function substituteBaseProps(
       result[key] = substituteValue(val as LiveValue, vars);
     }
   }
-  return result as DVObjectUnion;
+  return result as unknown as DVObjectUnion;
 }
 
 function substituteValue(lv: LiveValue, vars: Record<string, string>): LiveValue {
