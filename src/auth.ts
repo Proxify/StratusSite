@@ -1,25 +1,14 @@
 import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
-import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 import PostgresAdapter from "@auth/pg-adapter";
 import { Pool } from "pg";
+import { authConfig } from "./auth.config";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   adapter: PostgresAdapter(pool),
   session: { strategy: "jwt" },
-  providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    MicrosoftEntraID({
-      clientId: process.env.AZURE_AD_CLIENT_ID!,
-      clientSecret: process.env.AZURE_AD_CLIENT_SECRET!,
-      tenantId: process.env.AZURE_AD_TENANT_ID ?? "common",
-    }),
-  ],
   callbacks: {
     async jwt({ token, user, trigger }) {
       if (user) {
@@ -46,9 +35,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session;
     },
-  },
-  pages: {
-    signIn: "/auth/signin",
-    error: "/auth/error",
   },
 });
