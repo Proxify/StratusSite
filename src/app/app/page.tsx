@@ -27,6 +27,16 @@ const tools = [
     status: 'in-development' as const,
     modes: ['RENDER', 'RADDICAL', 'PROCESS_BOOK'],
   },
+  {
+    href: '/app/littledrop',
+    name: 'LittleDrop Suite',
+    tagline: 'HMI utilities & tag tooling',
+    description:
+      'Ported utilities from the desktop LittleDrop Suite: graphic extraction, tag inventories, conditional control point replacement, and search.',
+    accepts: '.htm / project folders',
+    status: 'in-development' as const,
+    modes: ['EXTRACT', 'SEARCH', 'REPORT'],
+  },
 ];
 
 export default function AppsPortalPage() {
