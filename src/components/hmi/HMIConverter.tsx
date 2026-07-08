@@ -8,10 +8,9 @@ import {
   type ConversionResult,
   type ConversionProgress as ProgressType,
   type HMIGraphic,
+  type PointTag,
+  type NavigationLink,
 } from '@/lib/hmi/types';
-import { parseHMIFile } from '@/lib/hmi/parser';
-import { renderGraphic, canvasToJpegBlob } from '@/lib/hmi/renderer';
-import { extractDataAndLinks } from '@/lib/hmi/extractor';
 import { exportTagsCsv, csvToBlob } from '@/lib/hmi/exporters/csv-exporter';
 import {
   createRaddicalConvert,
@@ -81,67 +80,81 @@ export default function HMIConverter() {
     setLog([]);
     const progressItems: ProgressType[] = files.map((f) => ({
       fileName: f.name,
-      status: 'pending',
+      status: 'processing',
     }));
     setProgress([...progressItems]);
-    addLog(`Starting conversion of ${files.length} file(s) — ${settings.conversionType} mode`);
+    addLog(`Uploading ${files.length} file(s) for server-side conversion — ${settings.conversionType} mode`);
 
-    const newResults: ConversionResult[] = [];
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      progressItems[i] = { ...progressItems[i], status: 'processing' };
-      setProgress([...progressItems]);
-      addLog(`Processing: ${file.name}`);
-
-      try {
-        const content = await file.text();
-        const graphic: HMIGraphic = parseHMIFile(content, file.name);
-        addLog(`  Parsed: ${graphic.objects.length} objects, ${graphic.width}x${graphic.height}`);
-
-        // Extract tags and nav links
-        const { pointTags, navigationLinks } = extractDataAndLinks(graphic, {
-          tagConversionMap: settings.tagConversionMap,
-          conversionType: settings.conversionType,
-          historianServerName: settings.piServerName,
-        });
-        addLog(`  Extracted: ${pointTags.length} tags, ${navigationLinks.length} nav links`);
-
-        // Render to canvas and get JPEG
-        let imageBlob: Blob | undefined;
-        let imageDataUrl: string | undefined;
-        try {
-          const canvas = renderGraphic(graphic, { scale: settings.imageScale });
-          imageBlob = await canvasToJpegBlob(canvas);
-          imageDataUrl = URL.createObjectURL(imageBlob);
-          addLog(`  Rendered: ${canvas.width}x${canvas.height} at ${settings.imageScale}x scale`);
-        } catch (err) {
-          addLog(`  Render warning: ${err instanceof Error ? err.message : 'Canvas not available in this context'}`);
-        }
-
-        const result: ConversionResult = {
-          fileName: file.name.replace(/\.htm$/i, ''),
-          graphic,
-          pointTags,
-          navigationLinks,
-          imageBlob,
-          imageDataUrl,
-        };
-        newResults.push(result);
-
-        progressItems[i] = { ...progressItems[i], status: 'complete', message: `${pointTags.length} tags` };
-        setProgress([...progressItems]);
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : 'Unknown error';
-        addLog(`  ERROR: ${msg}`);
-        progressItems[i] = { ...progressItems[i], status: 'error', message: msg };
-        setProgress([...progressItems]);
-      }
+    interface ServerResult {
+      fileName: string;
+      graphic?: HMIGraphic;
+      pointTags?: PointTag[];
+      navigationLinks?: NavigationLink[];
+      imageBase64?: string;
+      error?: string;
     }
 
-    setResults(newResults);
-    setActiveResultIdx(0);
-    addLog(`Conversion complete. ${newResults.length}/${files.length} successful.`);
+    try {
+      const formData = new FormData();
+      files.forEach((f) => formData.append('files', f));
+      formData.append(
+        'settings',
+        JSON.stringify({
+          conversionType: settings.conversionType,
+          piServerName: settings.piServerName,
+          imageScale: settings.imageScale,
+          tagConversionEntries: Array.from(settings.tagConversionMap.entries()),
+        })
+      );
+
+      const res = await fetch('/api/process/hmi', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error || `Server error (${res.status})`);
+      }
+      const { results: serverResults }: { results: ServerResult[] } = await res.json();
+
+      const newResults: ConversionResult[] = [];
+      serverResults.forEach((r, i) => {
+        if (r.error || !r.graphic || !r.pointTags || !r.navigationLinks) {
+          const msg = r.error ?? 'No result returned';
+          addLog(`  ERROR in ${r.fileName}: ${msg}`);
+          progressItems[i] = { ...progressItems[i], status: 'error', message: msg };
+          return;
+        }
+
+        let imageBlob: Blob | undefined;
+        let imageDataUrl: string | undefined;
+        if (r.imageBase64) {
+          const bytes = Uint8Array.from(atob(r.imageBase64), (c) => c.charCodeAt(0));
+          imageBlob = new Blob([bytes], { type: 'image/jpeg' });
+          imageDataUrl = URL.createObjectURL(imageBlob);
+        }
+
+        addLog(
+          `  ${r.fileName}: ${r.graphic.objects.length} objects, ${r.pointTags.length} tags, ${r.navigationLinks.length} nav links`
+        );
+        newResults.push({
+          fileName: r.fileName,
+          graphic: r.graphic,
+          pointTags: r.pointTags,
+          navigationLinks: r.navigationLinks,
+          imageBlob,
+          imageDataUrl,
+        });
+        progressItems[i] = { ...progressItems[i], status: 'complete', message: `${r.pointTags.length} tags` };
+      });
+
+      setProgress([...progressItems]);
+      setResults(newResults);
+      setActiveResultIdx(0);
+      addLog(`Conversion complete. ${newResults.length}/${files.length} successful.`);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Conversion failed';
+      addLog(`ERROR: ${msg}`);
+      setProgress(files.map((f) => ({ fileName: f.name, status: 'error', message: msg })));
+    }
+
     setIsConverting(false);
   }
 

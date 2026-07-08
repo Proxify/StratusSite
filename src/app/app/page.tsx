@@ -6,7 +6,17 @@ export const metadata: Metadata = {
   description: 'Web-based processing tools for industrial DCS graphics.',
 };
 
-const tools = [
+interface Tool {
+  href: string;
+  name: string;
+  tagline: string;
+  description: string;
+  accepts: string;
+  status: 'available' | 'in-development';
+  modes: string[];
+}
+
+const tools: Tool[] = [
   {
     href: '/app/hmi-insight',
     name: 'HMI Insight',
@@ -14,7 +24,7 @@ const tools = [
     description:
       'Convert .htm files exported from Honeywell Experion into rendered images, Raddical visualizations, tag inventories, and PDF/Excel reports.',
     accepts: '.htm',
-    status: 'available' as const,
+    status: 'available',
     modes: ['RENDER', 'RADDICAL', 'PROCESS_BOOK'],
   },
   {
@@ -24,7 +34,7 @@ const tools = [
     description:
       'Convert .di.ahc display files from Emerson DeltaV Live into rendered images, Raddical visualizations, and tag exports.',
     accepts: '.di.ahc + .gc.ahc',
-    status: 'in-development' as const,
+    status: 'available',
     modes: ['RENDER', 'RADDICAL', 'PROCESS_BOOK'],
   },
   {
@@ -34,7 +44,7 @@ const tools = [
     description:
       'Ported utilities from the desktop LittleDrop Suite: graphic extraction, tag inventories, conditional control point replacement, and search.',
     accepts: '.htm / project folders',
-    status: 'in-development' as const,
+    status: 'available',
     modes: ['EXTRACT', 'SEARCH', 'REPORT'],
   },
 ];

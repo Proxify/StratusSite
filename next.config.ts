@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
 
+  // Native/dynamic-require packages used by /api/process/* — keep unbundled
+  serverExternalPackages: ["@napi-rs/canvas", "jsdom"],
+
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "lh3.googleusercontent.com" },

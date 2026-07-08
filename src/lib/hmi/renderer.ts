@@ -33,17 +33,35 @@ export interface RenderOptions {
 }
 
 /**
- * Render an HMIGraphic to an OffscreenCanvas and return it.
+ * Minimal canvas surface renderGraphic needs — satisfied by both the browser
+ * OffscreenCanvas and @napi-rs/canvas's Canvas (server-side).
+ */
+export interface RenderCanvas {
+  width: number;
+  height: number;
+  getContext(contextId: '2d'): unknown;
+}
+
+export type CanvasFactory = (width: number, height: number) => RenderCanvas;
+
+/**
+ * Render an HMIGraphic to a canvas and return it.
+ *
+ * In the browser this creates an OffscreenCanvas; on the server pass a
+ * factory (e.g. @napi-rs/canvas createCanvas) to render without a DOM.
  */
 export function renderGraphic(
   graphic: HMIGraphic,
-  options: RenderOptions = {}
+  options: RenderOptions = {},
+  createCanvasFn?: CanvasFactory
 ): OffscreenCanvas {
   const scale = options.scale ?? DEFAULT_IMAGE_SCALE;
   const canvasWidth = Math.round(graphic.width * scale);
   const canvasHeight = Math.round(graphic.height * scale);
 
-  const canvas = new OffscreenCanvas(canvasWidth, canvasHeight);
+  const canvas = (createCanvasFn
+    ? createCanvasFn(canvasWidth, canvasHeight)
+    : new OffscreenCanvas(canvasWidth, canvasHeight)) as OffscreenCanvas;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Failed to get 2D context');
 

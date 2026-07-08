@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { extractDataAndLinks } from '@/lib/hmi/extractor';
+import { ConversionType } from '@/lib/hmi/types';
 import type {
   HMIGraphic,
   HMIWebDataValue,
@@ -127,7 +128,7 @@ describe('extractDataAndLinks', () => {
     it('appends historian server name in RADDICAL mode', () => {
       const graphic = makeGraphic([makeDataValue('F101.PV', 10, 10, 100, 25)]);
       const { pointTags } = extractDataAndLinks(graphic, {
-        conversionType: 'RADDICAL',
+        conversionType: ConversionType.RADDICAL,
         historianServerName: '\\\\PISERVER',
       });
       expect(pointTags[0].tagname).toBe('F101.PV\\\\PISERVER');

@@ -1,0 +1,6 @@
+# moved from package.json "pnpm" key (no longer read by pnpm >= 10)
+allowBuilds:
+  core-js: false
+  esbuild: true
+  sharp: true
+  unrs-resolver: true

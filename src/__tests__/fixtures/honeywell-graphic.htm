@@ -1,0 +1,25 @@
+<HTML>
+<HEAD><TITLE>TEST_GRAPHIC</TITLE></HEAD>
+<BODY style="width:1024px;height:768px;">
+<DIV id=ScRect001 style="position:absolute;left:10px;top:10px;" src=".\TEST_GRAPHIC_files\HscRect001.sha" parameters="HscRect001?tagname:FIC101.PV;HscRect001?title:Feed Flow Control;HscRect001?color:GREEN">
+</DIV>
+<DIV id=ScPump01 style="position:absolute;left:100px;top:100px;" src=".\TEST_GRAPHIC_files\HscPump.sha" parameters="HscPump?tagname:P201.PV;HscPump?tagname:P201.SP">
+</DIV>
+<INPUT type=button id=ScPB001 style="position:absolute;left:200px;top:200px;" src=".\TEST_GRAPHIC_files\PushBtn.sha" parameters="PushBtn?tagname:FIC101.OP">
+<script language=vbscript for=ScRect001 event=onshapeload>on error resume next
+if DataValue("FIC101.PV") > 100 then me.style.color = "red"
+</script>
+<script language=vbscript for=ScPump01 event=onactivate>On error resume Next
+me.style.cursor = "pointer"
+</script>
+<script language=vbscript for=ScPB001 event=onclick>dim sShow,sErr,oShape
+sShow = "OVERVIEW"
+window.external.Parent.RequestTask sShow
+</script>
+<script language=vbscript for=ScCustom01 event=onclick>
+dim pv
+pv = DataValue("FIC101.PV")
+if pv > 200 then doCustomAlert(pv)
+</script>
+</BODY>
+</HTML>

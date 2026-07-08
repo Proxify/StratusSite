@@ -24,6 +24,16 @@ const defaultSettings: DeltaVSettings = {
 
 const THEMES = ['DEFAULT', 'DG', 'DB', 'TAN', 'LB', 'MOT'];
 
+interface DVResult {
+  fileName: string;
+  width?: number;
+  height?: number;
+  svg?: string;
+  imageBase64?: string;
+  tagLinks?: { tagname: string; objectName: string; gemName?: string }[];
+  error?: string;
+}
+
 export default function DeltaVConverter() {
   const [fileSets, setFileSets] = useState<DeltaVFileSet[]>([]);
   const [gemFiles, setGemFiles] = useState<File[]>([]);
@@ -31,6 +41,8 @@ export default function DeltaVConverter() {
   const [isConverting, setIsConverting] = useState(false);
   const [log, setLog] = useState<string[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [results, setResults] = useState<DVResult[]>([]);
+  const [activeResultIdx, setActiveResultIdx] = useState(0);
 
   const displayInputRef = useRef<HTMLInputElement>(null);
   const gemInputRef = useRef<HTMLInputElement>(null);
@@ -89,37 +101,80 @@ export default function DeltaVConverter() {
     setFileSets([]);
     setGemFiles([]);
     setLog([]);
+    setResults([]);
+    setActiveResultIdx(0);
+  }
+
+  function downloadBlob(blob: Blob, filename: string) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   async function convertFiles() {
     if (fileSets.length === 0) return;
     setIsConverting(true);
     setLog([]);
+    setResults([]);
 
     addLog(
-      `Starting conversion of ${fileSets.length} display file(s) — ${settings.conversionType} mode, theme: ${settings.theme}`
+      `Uploading ${fileSets.length} display file(s) for server-side conversion — ${settings.conversionType} mode, theme: ${settings.theme}`
     );
     if (gemFiles.length > 0) {
-      addLog(`Gem library: ${gemFiles.length} .gc.ahc file(s) loaded`);
+      addLog(`Gem library: ${gemFiles.length} .gc.ahc file(s)`);
     }
 
-    // Processing infrastructure is under active development (STR-5).
-    // This stub logs intent and readies the file pipeline.
-    await new Promise((r) => setTimeout(r, 600));
+    try {
+      const formData = new FormData();
+      fileSets.forEach((set) => formData.append('displays', set.displayFile));
+      gemFiles.forEach((f) => formData.append('gems', f));
+      formData.append(
+        'settings',
+        JSON.stringify({
+          conversionType: settings.conversionType,
+          theme: settings.theme,
+          imageScale: settings.imageScale,
+        })
+      );
 
-    for (const set of fileSets) {
-      addLog(`Queued: ${set.displayFile.name} (${(set.displayFile.size / 1024).toFixed(1)} KB)`);
+      const res = await fetch('/api/process/deltav', { method: 'POST', body: formData });
+      if (!res.ok) {
+        const body = await res.json().catch(() => null);
+        throw new Error(body?.error || `Server error (${res.status})`);
+      }
+      const data: { results: DVResult[]; gemErrors: string[]; gemCount: number } =
+        await res.json();
+
+      if (data.gemCount > 0) addLog(`Resolved ${data.gemCount} gem definition(s)`);
+      data.gemErrors.forEach((e) => addLog(`  Gem library warning: ${e}`));
+
+      let ok = 0;
+      for (const r of data.results) {
+        if (r.error) {
+          addLog(`  ERROR in ${r.fileName}: ${r.error}`);
+        } else {
+          ok++;
+          addLog(
+            `  ${r.fileName}: ${r.width}x${r.height}, ${r.tagLinks?.length ?? 0} tag link(s)`
+          );
+        }
+      }
+
+      setResults(data.results);
+      setActiveResultIdx(0);
+      addLog(`Conversion complete. ${ok}/${data.results.length} successful.`);
+    } catch (err) {
+      addLog(`ERROR: ${err instanceof Error ? err.message : 'Conversion failed'}`);
     }
-
-    addLog('');
-    addLog('⚠  DeltaV Render processing engine is under active development.');
-    addLog('   The TypeScript port of SCILiveConverter is tracked in STR-5.');
-    addLog('   File upload and settings are ready — processing will be wired up shortly.');
 
     setIsConverting(false);
   }
 
   const totalFiles = fileSets.length;
+  const activeResult = results[activeResultIdx];
 
   return (
     <div className="space-y-6">
@@ -356,6 +411,114 @@ export default function DeltaVConverter() {
               )
             )}
           </div>
+        </div>
+      )}
+
+      {/* Results */}
+      {results.length > 0 && (
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-white">Results</h2>
+
+          {results.length > 1 && (
+            <div className="flex gap-1 overflow-x-auto">
+              {results.map((r, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveResultIdx(i)}
+                  className={`rounded-md px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors ${
+                    i === activeResultIdx
+                      ? 'bg-accent text-white'
+                      : 'bg-white/5 text-muted hover:bg-white/10'
+                  }`}
+                >
+                  {r.fileName}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {activeResult && !activeResult.error && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between text-sm text-muted">
+                <span>
+                  {activeResult.width}&times;{activeResult.height} &mdash;{' '}
+                  {activeResult.tagLinks?.length ?? 0} tag link(s)
+                </span>
+                <div className="flex gap-3">
+                  {activeResult.svg && (
+                    <button
+                      onClick={() =>
+                        downloadBlob(
+                          new Blob([activeResult.svg!], { type: 'image/svg+xml' }),
+                          `${activeResult.fileName}.svg`
+                        )
+                      }
+                      className="text-accent hover:text-accent-hover text-xs"
+                    >
+                      Download SVG
+                    </button>
+                  )}
+                  {activeResult.imageBase64 && (
+                    <button
+                      onClick={() => {
+                        const bytes = Uint8Array.from(atob(activeResult.imageBase64!), (c) =>
+                          c.charCodeAt(0)
+                        );
+                        downloadBlob(
+                          new Blob([bytes], { type: 'image/png' }),
+                          `${activeResult.fileName}.png`
+                        );
+                      }}
+                      className="text-accent hover:text-accent-hover text-xs"
+                    >
+                      Download PNG
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Rendered preview */}
+              {activeResult.imageBase64 && (
+                <div className="overflow-auto rounded-lg border border-white/10 bg-black/20 p-2">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`data:image/png;base64,${activeResult.imageBase64}`}
+                    alt={`Rendered ${activeResult.fileName}`}
+                    className="max-w-full"
+                  />
+                </div>
+              )}
+
+              {/* Tag links table */}
+              {(activeResult.tagLinks?.length ?? 0) > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium text-white mb-2">
+                    Tag Links ({activeResult.tagLinks!.length})
+                  </h3>
+                  <div className="overflow-x-auto rounded-lg border border-white/10">
+                    <table className="w-full text-left text-xs">
+                      <thead className="bg-white/5 text-muted">
+                        <tr>
+                          <th className="px-3 py-2 font-medium">Tag</th>
+                          <th className="px-3 py-2 font-medium">Object</th>
+                          <th className="px-3 py-2 font-medium">Gem</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {activeResult.tagLinks!.map((t, i) => (
+                          <tr key={i} className="border-t border-white/5 text-white/80">
+                            <td className="px-3 py-1.5 font-mono">{t.tagname}</td>
+                            <td className="px-3 py-1.5">{t.objectName}</td>
+                            <td className="px-3 py-1.5 text-muted">{t.gemName ?? '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>
