@@ -1,12 +1,11 @@
-import { auth } from '@/auth';
+import { requireSubscription } from '@/lib/server/auth-guard';
 import { parseFhx } from '@/lib/littledrop/config-siphon/parser';
 import { buildTables, tablesToXlsx } from '@/lib/littledrop/config-siphon/exporter';
 import type { SiphonOptions } from '@/lib/littledrop/config-siphon/types';
 
 export async function POST(request: Request) {
-  const session = await auth();
-  if (!session?.user?.subscriptionActive)
-    return Response.json({ error: 'Subscription required' }, { status: 403 });
+  const guard = await requireSubscription();
+  if (guard) return guard;
 
   let formData: FormData;
   try {

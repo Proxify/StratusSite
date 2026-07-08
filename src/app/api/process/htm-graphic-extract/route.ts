@@ -1,11 +1,10 @@
-import { auth } from '@/auth';
+import { requireSubscription } from '@/lib/server/auth-guard';
 import { extractFromFiles } from '@/lib/littledrop/htm-graphic-extract/extractor';
 import type { ExtractionOptions } from '@/lib/littledrop/htm-graphic-extract/types';
 
 export async function POST(request: Request) {
-  const session = await auth();
-  if (!session?.user?.subscriptionActive)
-    return Response.json({ error: 'Subscription required' }, { status: 403 });
+  const guard = await requireSubscription();
+  if (guard) return guard;
 
   let formData: FormData;
   try {

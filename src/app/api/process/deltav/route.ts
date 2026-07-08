@@ -1,6 +1,6 @@
 import '@/lib/server/dom';
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { requireSubscription } from '@/lib/server/auth-guard';
 import { createCanvas, loadImage } from '@napi-rs/canvas';
 import { parseDVFile } from '@/lib/deltav/parser';
 import { renderDVGraphicToSVG } from '@/lib/deltav/renderer';
@@ -23,10 +23,8 @@ interface DVProcessSettings {
  * extract DataLink tags.
  */
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user?.subscriptionActive) {
-    return NextResponse.json({ error: 'Subscription required' }, { status: 403 });
-  }
+  const guard = await requireSubscription();
+  if (guard) return guard;
 
   const formData = await req.formData();
   const displayFiles = formData.getAll('displays').filter((f): f is File => f instanceof File);
