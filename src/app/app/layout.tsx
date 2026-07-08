@@ -6,14 +6,16 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  if (process.env.DEV_BYPASS_AUTH !== "true") {
+    const session = await auth();
 
-  if (!session) {
-    redirect("/auth/signin");
-  }
+    if (!session) {
+      redirect("/auth/signin");
+    }
 
-  if (!session.user.subscriptionActive) {
-    redirect("/pricing?message=subscribe");
+    if (!session.user.subscriptionActive) {
+      redirect("/pricing?message=subscribe");
+    }
   }
 
   return <>{children}</>;

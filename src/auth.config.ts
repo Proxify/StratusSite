@@ -20,6 +20,8 @@ export const authConfig: NextAuthConfig = {
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
+      if (process.env.DEV_BYPASS_AUTH === "true") return true;
+
       const isLoggedIn = !!auth?.user;
       const isApp = nextUrl.pathname.startsWith("/app");
       const isDashboard = nextUrl.pathname.startsWith("/dashboard");
